@@ -1,0 +1,52 @@
+#Module 11 - Debugging and defensive programming in R
+
+#Assignment
+
+#The code below contains a 'deliberate' bug!  
+  tukey_multiple <- function(x) {
+    outliers <- array(TRUE,dim=dim(x))
+    for (j in 1:ncol(x))
+    {
+      outliers[,j] <- outliers[,j] && tukey.outlier(x[,j])
+    }
+    outlier.vec <- vector(length=nrow(x))
+    for (i in 1:nrow(x))
+    { outlier.vec[i] <- all(outliers[i,]) } return(outlier.vec) 
+
+  # Moving the return statement outside of loop
+   tukey_multiple <- function(x) {
+    outliers <- array(TRUE,dim=dim(x))
+    for (j in 1:ncol(x)) {
+      outliers[,j] <- outliers[,j] && tukey.outlier(x[,j])
+    }
+    outlier.vec <- vector(length=nrow(x))
+    for (i in 1:nrow(x)) {
+      outlier.vec[i] <- all(outliers[i,])
+    }
+    return(outlier.vec)  
+   
+   
+   # Using '&' instead of '&&' to fix error
+   tukey_multiple <- function(x) {
+     outliers <- array(TRUE, dim = dim(x))
+     for (j in 1:ncol(x)) {
+       outliers[, j] <- outliers[, j] & tukey.outlier(x[, j])
+     }
+     outlier.vec <- vector(length = nrow(x))
+     for (i in 1:nrow(x)) {
+       outlier.vec[i] <- all(outliers[i, ])
+     }
+     return(outlier.vec)
+   }
+   
+
+   # using debug() function to set debugging mode 
+   debug(tukey_multiple)
+   
+   # Generate some sample data
+   set.seed(111)
+   data <- matrix(rnorm(100), ncol = 2)
+   
+   # Call the tukey_multiple function with the sample data to trigger debugging session
+   tukey_multiple(data)
+   
